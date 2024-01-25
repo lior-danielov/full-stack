@@ -1,0 +1,261 @@
+<canvas id="myCanvas" width="400" height="300" style="border:1px solid;"></canvas>
+<br>
+<p>score:</p>
+<p id="score">--</p>
+<p>pakmen_X:</p>
+<p id="x_value">--</p>
+<p>pakmen_Y:</p>
+<p id="y_value">--</p>
+<p>Apple_x:</p>
+<p id="rnd_x_value">--</p>
+<p>Apple_y:</p>
+<p id="rnd_y_value">--</p>
+<p>rnd2_x:</p>
+<p id="rnd2_x_value"></p>
+<p>rnd2_y</p>
+<p id="rnd2_y_value"></p>
+<p>enemyX:</p>
+<p id="enemy_x">--</p>
+<p>enemyY:</p>
+<p id="enemy_y">--</p>
+
+<!-- יצירת המכשול החדש -->
+<p>enemyBlueX:</p>
+<p id="enemyblue_x">--</p>
+<p>enemyBlueY:</p>
+<p id="enemyblue_y">--</p>
+
+
+<p>live:</p>
+<p id="live">--</p>
+
+<script>
+    // פונקציה שתגרום למשתנה
+    // direction
+    // להשתנות בכל פעם שמקישים על מקש (לפי הלחיצה) 
+    function keyDownEventHandler() {
+        if (event.keyCode == 40)
+            direction = "down";
+        if (event.keyCode == 38)
+            direction = "up";
+        if (event.keyCode == 37)
+            direction = "left";
+        if (event.keyCode == 39)
+            direction = "right";
+    }
+
+    // פונקציה שתגרום לערכים
+    // X ו Y
+    // להשתנות לפי הכיוון שבמשתנה 
+    // direction
+    function TimeEventHandler() {
+
+        if (direction == "right" && x < 380)
+            x += 20;
+        if (direction == "left" && x > 0)
+            x -= 20;
+        if (direction == "up" && y > 0)
+            y -= 20;
+        if (direction == "down" && y < 280)
+            y += 20;
+        // להגדיר שכשמגיע לגבול יהפוך כיוון
+        if (direction == "right" && x == 380)
+            direction = "left";
+        if (direction == "left" && x == 0)
+            direction = "right";
+        if (direction == "up" && y == 0)
+            direction = "down";
+        if (direction == "down" && y == 280)
+            direction = "up";
+
+        for(var i=0 ; i<bricks.length ; i++) 
+            if( ( x==bricks[i].x-20 )  && ( y==bricks[i].y )  && ( direction == "right" ) ) 
+                live += 1;
+        //עצירת הפקמן כאשר מגיע למכשול האדום
+        if ((x == enemy_x+20 && y==enemy_y && direction =="left")|| (x == enemy_x-20 && y==enemy_y && direction =="right")
+        ||(y == enemy_y+20 && x==enemy_x && direction =="up")||(y == enemy_y-20 && x==enemy_x && direction =="down")){
+            live -=1;   direction = "stop";
+        }
+         
+
+        //עצירת הפאקמן כאשר מגיע למכשול הכחול---------  ------
+        if ((x == enemyBlue_x+20 && y==enemyBlue_y && direction =="left")|| (x == enemyBlue_x-20 && y==enemyBlue_y && direction =="right")
+        ||(y == enemyBlue_y+20 && x==enemyBlue_x && direction =="up")||(y == enemyBlue_y-20 && x==enemyBlue_x && direction =="down")){
+            live -=1;   direction = "stop";
+        }
+
+        //  להגדיר שכשמגיע לתפוח יעלה הציון ושישנה מיקום תפוח 1 ו 2
+        if (rnd_x == x && rnd_y == y || rnd2_x == x && rnd2_y == y){
+            score += 1
+
+            rnd_x = Math.floor((Math.random() * 20)) * 20
+            rnd_y = Math.floor((Math.random() * 15)) * 20
+
+            rnd2_x = Math.floor((Math.random() * 20)) * 20
+            rnd2_y = Math.floor((Math.random() * 15)) * 20
+
+            //****נ.ב  משימה כל פעם שצובר נקודה אזזי להוסיף עוד חצי קוביה מאחורה****
+            //****נ.ב  משימה להוסיף מכשולים למשחק ובכל פעם שנתקל במכשול****
+            //****נ.ב משימה או אפשרות שנייה בקירות ניתן להוריד נקודה או שירד לו חיים****()
+        }
+        // הורדת חיים למכשול ירוק וכחול
+        if((enemy_x == x) && (enemy_y == y)){
+            live = live - 1;
+        }
+        if((enemyBlue_x == x) && (enemyBlue_y == y)){
+            live -=1;
+        }
+        if(live == 0){
+            window.alert("game over");
+        }
+        
+        // להדפיס ל
+        // HTML
+        // את ערך ה
+        // X ו Y
+        // המעודכן כל פעם
+        document.getElementById("x_value").innerHTML = x;
+        document.getElementById("y_value").innerHTML = y;
+        // להדפיס ל
+        //HTML 
+        // את ערך הציון המעודכן
+        document.getElementById("score").innerHTML = score;
+
+        // להדפיס ל
+        //HTML 
+        // את ערך המכשול x ו y בהתאמה
+        document.getElementById("enemy_x").innerHTML = enemy_x;
+        document.getElementById("enemy_y").innerHTML = enemy_y;
+        
+        //להדפיס בהתאמה את המכשול הכחול ------------      -----------
+        document.getElementById("enemyblue_x").innerHTML = enemy_x;
+        document.getElementById("enemyblue_y").innerHTML = enemy_y;
+        
+
+    // להדפיס ל
+    //HTML 
+    // את ערך החיים המעודכן
+    document.getElementById("live").innerHTML = live;
+
+        
+        
+        // לנקות ולייצר את לוח המשחק צבע, מיקום, וגודל
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, 400, 300);
+
+
+        // לייצר את הפאקמן צבע, מיקום (ערך ה
+        // ,(X ו Y
+        // וגודל
+        ctx.fillStyle = "black";
+        ctx.fillRect(x, y, 20, 20);
+        // לייצר את התפוח צבע, מיקום (ערך ה
+        // ,(X ו Y
+        // וגודל
+        ctx.fillStyle = "green";
+        ctx.fillRect(rnd_x, rnd_y, 20, 20);
+
+        // לייצר את התפוח 2 צבע, מיקום (ערך ה
+        // ,(X ו Y
+        // וגודל
+        ctx.fillStyle = "green";
+        ctx.fillRect(rnd2_x, rnd2_y, 20, 20);
+        
+        // לייצר את המכשול האדום צבעו וגודלו
+        ctx.fillStyle = "red";
+        ctx.fillRect(enemy_x, enemy_y, 20, 20);
+ 
+        // לייצר את המכשול הכחול צבעו וגודלו
+        ctx.fillStyle = "blue";
+        ctx.fillRect(enemyBlue_x, enemyBlue_y, 20, 20);
+ 
+    }
+
+
+    
+// לגרום ללוח המשחק להיות דו מימדי
+ctx = document.getElementById('myCanvas').getContext('2d');
+
+var map = Array( 
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1); 
+     
+    bricks = new Array(); 
+ 
+    map_x = 0; 
+    map_y = 0;       
+    for (var i = 0; i < map.length; i++)  
+    {    
+        if(map[i]==1)  
+        {        
+            map_x=i%20; 
+            map_y= Math.floor(i/20);     
+            bricks.push( { x: map_x*20, y: map_y*20 } ); 
+        }    
+    }
+
+    // מיקום ראשוני של הפאקמן
+    // (X ו Y) 
+    var x = 100;
+    var y = 100;
+    // כיוון ראשוני של משתנה ה
+    // direction
+    var direction = "right";
+    // מיקום ראשוני של התפוח
+    var rnd_x = Math.floor((Math.random() * 15)) * 20
+    var rnd_y = Math.floor((Math.random() * 20)) * 20
+
+    // מיקום ראשוני של התפוח 2
+    var rnd2_x = Math.floor((Math.random() * 15)) * 20
+    var rnd2_y = Math.floor((Math.random() * 20)) * 20
+
+    //  הגדרת משתנה לציון
+    var score = 0
+
+
+    // מיקום ראשוני של המכשול האדום
+    var enemy_x = 100  //Math.floor((Math.random() * 15)) * 20
+    var enemy_y = 160 //Math.floor((Math.random() * 20)) * 20
+
+    // מיקום ראשוני של המכשול הכחול--------    ---------
+    var enemyBlue_x = 120  //Math.floor((Math.random() * 15)) * 20
+    var enemyBlue_y = 100 //Math.floor((Math.random() * 20)) * 20
+
+
+    // אתחול של החיים של פאקמן ל 3
+    var live = 3
+
+    // להדפיס למחשב את הערך הרנדומלי המעודכן כל פעם
+    document.getElementById("rnd_x_value").innerHTML = rnd_x;
+    document.getElementById("rnd_y_value").innerHTML = rnd_y;
+
+    document.getElementById("rnd2_x_value").innerHTML = rnd2_x;
+    document.getElementById("rnd2_y_value").innerHTML = rnd2_y;
+
+    // setInterval
+    // קוראת לפונקציית
+    // TimeEventHandler
+    // כל 300 מילי-שניות
+    setInterval(TimeEventHandler, 300);
+    
+    // תשפיע על ה 
+    // HTML
+    // כל פעם שלוחצים על מקש תקרא לפונקציה
+    // keyDownEventHandler
+    document.onkeydown = keyDownEventHandler;
+    
+
+</script>
